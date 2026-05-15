@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<title>NexWave Lighting — Job Costing</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#0c1114;color:#e5f3f3;min-height:100vh;overflow-x:hidden}
+:root{
+  --teal:#00B5AD;--teal-h:#00d4cb;--teal-dark:#007d79;
+  --teal-deep:#003f3d;--teal-glow:rgba(0,181,173,.13);
+  --panel:#161d21;--panel2:#1b2429;--card:#181f24;
+  --border:#242f35;--border2:#2d3a41;--muted:#4a6070;
+  --white:#e5f3f3;--green:#27c87e;--red:#e05555;--gold:#f0b429;
+  --hdr:58px;
+}
+header{position:fixed;top:0;left:0;right:0;height:var(--hdr);background:var(--panel);border-bottom:2px solid var(--teal);display:flex;align-items:center;justify-content:space-between;padding:0 16px;z-index:999;box-shadow:0 2px 20px rgba(0,0,0,.6);}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-text{font-size:24px;font-weight:900;letter-spacing:3px;color:var(--white);font-variant:small-caps;white-space:nowrap}
+.logo-text span{color:var(--teal)}
+.logo-pipe{width:1px;height:28px;background:var(--border2)}
+.logo-meta{display:flex;flex-direction:column}
+.logo-meta b{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--teal);font-weight:600}
+.logo-meta small{font-size:10px;color:var(--muted)}
+.hdr-btns{display:flex;gap:8px;align-items:center}
+button{cursor:pointer;font-family:inherit;border:none;outline:none;transition:all .15s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;-webkit-tap-highlight-color:transparent;font-size:13px}
+.btn{padding:7px 14px;border-radius:6px;font-weight:500}
+.btn-teal{background:var(--teal);color:#091011}
+.btn-teal:hover,.btn-teal:active{background:var(--teal-h)}
+.btn-ghost{background:var(--panel2);color:var(--white);border:1px solid var(--border2)}
+.btn-ghost:hover,.btn-ghost:active{background:#202c34;border-color:var(--teal)}
+.btn-outline{background:transparent;color:var(--teal);border:1px solid var(--teal)}
+.btn-outline:hover,.btn-outline:active{background:var(--teal-glow)}
+.btn-red{background:transparent;color:var(--red);border:1px solid #3a2020;padding:6px 12px;border-radius:5px}
+.btn-red:hover,.btn-red:active{background:rgba(224,85,85,.1)}
+.btn-sm{padding:5px 11px;font-size:12px;border-radius:4px}
+.btn-icon{background:none;border:none;color:var(--border2);font-size:20px;line-height:1;padding:3px 7px;border-radius:4px}
+.btn-icon:hover,.btn-icon:active{color:var(--red);background:rgba(224,85,85,.1)}
+.page{padding:calc(var(--hdr) + 18px) 16px 60px;max-width:1300px;margin:0 auto}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+.card{background:var(--panel);border:1px solid var(--border);border-top:3px solid var(--teal);border-radius:8px;padding:11px 13px}
+.card-lbl{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;font-family:monospace}
+.card-val{font-size:16px;font-weight:600;font-family:monospace;color:var(--teal)}
+.cv-wh{color:var(--white)}.cv-gr{color:var(--green)}.cv-go{color:var(--gold)}.cv-re{color:var(--red)}
+.toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:10px;flex-wrap:wrap}
+.toolbar-month{font-family:monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+.job-card{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--teal);border-radius:10px;overflow:hidden;margin-bottom:14px}
+.jt{display:flex;align-items:center;background:#111820;border-bottom:1px solid var(--border);padding:0 10px;gap:8px;min-height:46px}
+.job-num{font-family:monospace;font-size:11px;color:var(--muted);background:var(--border);border-radius:4px;padding:3px 7px;flex-shrink:0;user-select:none}
+.jt input.cust{flex:1;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--white);font-size:15px;font-weight:600;padding:5px 2px;outline:none;min-width:0;font-family:inherit}
+.jt input.cust:focus{border-bottom-color:var(--teal)}
+.jt input.cust::placeholder{color:var(--muted);font-weight:400}
+.brand-sel{background:var(--teal-deep);color:var(--teal);border:1px solid rgba(0,181,173,.3);border-radius:5px;font-size:12px;font-weight:700;padding:5px 8px;outline:none;cursor:pointer;flex-shrink:0}
+.brand-sel:focus{border-color:var(--teal)}
+.brand-sel option{background:#1b2429;color:var(--white)}
+.jmeta{display:grid;grid-template-columns:1fr 1fr 1fr 80px;border-bottom:1px solid var(--border)}
+.jmeta-cell{border-right:1px solid var(--border)}
+.jmeta-cell:last-child{border-right:none}
+.jmeta-lbl{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);padding:4px 10px 2px;background:rgba(255,255,255,.015);border-bottom:1px solid var(--border);font-family:monospace}
+.jmeta-cell input,.jmeta-cell select{width:100%;background:transparent;border:2px solid transparent;color:var(--white);font-family:inherit;font-size:12px;padding:6px 8px;outline:none;display:block}
+.jmeta-cell input:focus,.jmeta-cell select:focus{background:var(--teal-glow);border-color:var(--teal)}
+.jmeta-cell select{cursor:pointer}
+.jmeta-cell select option{background:#1b2429;color:var(--white)}
+.comm-sel{color:var(--teal) !important;font-family:monospace !important;font-size:15px !important;font-weight:700 !important}
+input[type="date"]{color-scheme:dark;font-family:monospace}
+.jbody{display:grid;grid-template-columns:1fr}
+.jcol{border-right:none}
+.jsec{border-bottom:1px solid var(--border)}
+.jsec:last-child{border-bottom:none}
+.jsec-title{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--teal);padding:6px 12px 4px;background:rgba(0,181,173,.05);border-bottom:1px solid var(--border)}
+.jrow{display:grid;grid-template-columns:150px 1fr;border-bottom:1px solid var(--border);min-height:38px;align-items:stretch}
+.jrow:last-child{border-bottom:none}
+.jlbl{padding:0 10px;display:flex;align-items:center;font-size:12px;color:var(--muted);background:rgba(255,255,255,.015);border-right:1px solid var(--border);user-select:none;white-space:nowrap}
+.jval{display:flex;align-items:center}
+.jval input,.jval select{width:100%;height:38px;background:transparent;border:2px solid transparent;color:var(--white);font-family:inherit;font-size:13px;padding:0 10px;outline:none}
+.jval input[type="number"]{text-align:right;font-family:monospace}
+.jval input:focus,.jval select:focus{background:var(--teal-glow);border-color:var(--teal)}
+.jval select option{background:#1b2429;color:var(--white)}
+input[type=number]{-moz-appearance:textfield}
+input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
+.calc{width:100%;height:38px;display:flex;align-items:center;justify-content:flex-end;padding:0 12px;font-family:monospace;font-size:13px;color:var(--teal);user-select:none;cursor:default}
+.calc-muted{color:var(--muted);font-size:11px}
+.calc-gold{color:var(--gold)}
+.crew-hdr{display:grid;grid-template-columns:1fr 80px 95px 75px 34px;background:rgba(255,255,255,.02);border-bottom:1px solid var(--border)}
+.chc{font-family:monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);padding:4px 8px;border-right:1px solid var(--border);display:flex;align-items:center}
+.chc:last-child{border-right:none}
+.chc-r{justify-content:flex-end}
+.crew-row{display:grid;grid-template-columns:1fr 80px 95px 75px 34px;border-bottom:1px solid var(--border);min-height:36px;align-items:stretch}
+.crew-row:last-child{border-bottom:none}
+.cc{border-right:1px solid var(--border);display:flex;align-items:center}
+.cc:last-child{border-right:none}
+.cc input,.cc select{width:100%;height:36px;background:transparent;border:2px solid transparent;color:var(--white);font-family:inherit;font-size:12px;padding:0 7px;outline:none}
+.cc input[type="number"]{text-align:right;font-family:monospace}
+.cc input:focus,.cc select:focus{background:var(--teal-glow);border-color:var(--teal)}
+.cc select option{background:#1b2429;color:var(--white)}
+.cc-cost{font-family:monospace;font-size:12px;color:var(--gold);justify-content:flex-end;padding:0 8px}
+.cc-rate{font-family:monospace;font-size:10px;color:var(--muted);justify-content:center;padding:0 4px}
+.cc-del{justify-content:center}
+.crew-add{padding:6px 10px;border-top:1px solid var(--border)}
+.notes-wrap{padding:7px 10px}
+textarea{width:100%;background:transparent;border:2px solid transparent;color:var(--white);font-family:inherit;font-size:13px;resize:vertical;border-radius:4px;padding:6px 8px;outline:none;line-height:1.5;min-height:56px;display:block}
+textarea:focus{background:var(--teal-glow);border-color:var(--teal)}
+textarea::placeholder{color:var(--muted)}
+.pban{display:grid;grid-template-columns:repeat(4,1fr);background:#10181e;border-top:2px solid var(--border)}
+.pb{padding:9px 12px;border-right:1px solid var(--border)}
+.pb:last-child{border-right:none}
+.pb-lbl{font-family:monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.pb-val{font-family:monospace;font-size:15px;font-weight:600;color:var(--teal)}
+.setup{margin-top:32px}
+.setup-hdr{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.setup-hdr h2{font-size:18px;font-weight:900;letter-spacing:2px;color:var(--teal);font-variant:small-caps;white-space:nowrap}
+.setup-hdr-line{flex:1;height:1px;background:var(--border)}
+.setup-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.setup-panel{background:var(--panel);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.setup-panel-hdr{background:#1a2328;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.setup-panel-hdr span{font-family:monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--teal)}
+.setup-item{display:flex;align-items:center;gap:8px;padding:2px 10px;border-bottom:1px solid var(--border)}
+.setup-item:last-child{border-bottom:none}
+.setup-item-n{font-family:monospace;font-size:10px;color:var(--muted);width:16px;flex-shrink:0}
+.setup-item input{flex:1;background:transparent;border:2px solid transparent;color:var(--white);font-family:inherit;font-size:13px;padding:6px 4px;border-radius:4px;outline:none}
+.setup-item input:focus{background:var(--teal-glow);border-color:var(--teal)}
+.setup-del{background:none;border:none;color:var(--border2);font-size:16px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:4px;cursor:pointer}
+.setup-del:hover{color:var(--red);background:rgba(224,85,85,.1)}
+@media(max-width:680px){
+  .logo-meta,.logo-pipe{display:none}
+  .logo-text{font-size:20px}
+  .cards{grid-template-columns:1fr 1fr}
+  .cards .card:last-child{grid-column:span 2}
+  .card-val{font-size:14px}
+  .jmeta{grid-template-columns:1fr 1fr}
+  .jmeta-cell:nth-child(2){border-right:none}
+  .jmeta-cell:nth-child(3){border-top:1px solid var(--border)}
+  .jmeta-cell:nth-child(4){border-top:1px solid var(--border)}
+  .jbody{grid-template-columns:1fr}
+  .jcol{border-right:none;border-bottom:1px solid var(--border)}
+  .jcol:last-child{border-bottom:none}
+  .jrow{grid-template-columns:130px 1fr;min-height:44px}
+  .jval input,.jval select{height:44px}
+  .calc{height:44px}
+  .crew-hdr{grid-template-columns:1fr 75px 90px 65px 34px}
+  .crew-row{grid-template-columns:1fr 75px 90px 65px 34px;min-height:42px}
+  .cc input,.cc select{height:42px}
+  .pban{grid-template-columns:1fr 1fr}
+  .pb:nth-child(2){border-right:none}
+  .pb:nth-child(3){border-top:1px solid var(--border)}
+  .pb:nth-child(4){border-top:1px solid var(--border);border-right:none}
+  .setup-grid{grid-template-columns:1fr}
+  .toolbar{flex-direction:column;align-items:flex-start}
+  .hdr-btns .btn-ghost span{display:none}
+}
+@media print{
+  header .hdr-btns,.btn-red,.btn-icon,.setup-del,.crew-add,.setup{display:none !important}
+  body,html{background:#fff !important;color:#111 !important}
+  header{position:relative !important;background:#111 !important;border-bottom:3px solid #00B5AD !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .logo-text{color:#fff !important}
+  .logo-text span{color:#00B5AD !important}
+  .logo-meta b,.logo-meta small{color:#aaa !important}
+  .page{padding:10px !important}
+  .card{background:#f0fafa !important;border-top:3px solid #00B5AD !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .card-lbl{color:#666 !important}.card-val{color:#007d79 !important}
+  .cv-gr{color:#1a8f5a !important}.cv-go{color:#9a7a00 !important}.cv-re{color:#c0392b !important}
+  .job-card{break-inside:avoid;border:1px solid #ccc !important;border-left:4px solid #00B5AD !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .jt{background:#f5f5f5 !important}
+  input,select,textarea{color:#111 !important}
+  .calc{color:#007d79 !important}.calc-gold{color:#9a7a00 !important}
+  .calc-muted{color:#666 !important}.cc-cost{color:#9a7a00 !important}
+  .pban{background:#e6f7f6 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .pb-val{color:#007d79 !important}
+  .jsec-title{color:#007d79 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .jlbl{color:#555 !important}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">
+    <div class="logo-text">NEX<span>WAVE</span></div>
+    <div class="logo-pipe"></div>
+    <div class="logo-meta">
+      <b>Lighting</b>
+      <small>Job Costing</small>
+    </div>
+  </div>
+  <div class="hdr-btns">
+    <button class="btn btn-outline btn-sm" onclick="doPrint()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Print / PDF
+    </button>
+  </div>
+</header>
+
+<div class="page">
+  <div class="cards">
+    <div class="card"><div class="card-lbl">Net Revenue</div><div class="card-val" id="s-rev">$0.00</div></div>
+    <div class="card"><div class="card-lbl">Total Labor</div><div class="card-val cv-go" id="s-labor">$0.00</div></div>
+    <div class="card"><div class="card-lbl">Total Commissions</div><div class="card-val cv-go" id="s-comm">$0.00</div></div>
+    <div class="card"><div class="card-lbl">Total Profit</div><div class="card-val cv-gr" id="s-profit">$0.00</div></div>
+  </div>
+  <div class="toolbar">
+    <span class="toolbar-month" id="monthLbl"></span>
+  </div>
+  <div id="jobsWrap"></div>
+  <div class="setup">
+    <div class="setup-hdr">
+      <h2>Setup</h2>
+      <div class="setup-hdr-line"></div>
+    </div>
+    <div class="setup-grid">
+      <div class="setup-panel">
+        <div class="setup-panel-hdr">
+          <span>Brands</span>
+          <button class="btn btn-ghost btn-sm" onclick="addSetup('brands')">+ Add</button>
+        </div>
+        <div id="brandsEl"></div>
+      </div>
+      <div class="setup-panel">
+        <div class="setup-panel-hdr">
+          <span>Salesmen</span>
+          <button class="btn btn-ghost btn-sm" onclick="addSetup('salesmen')">+ Add</button>
+        </div>
+        <div id="salesmenEl"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORE='nxw_v7', WAGE=25, TAX=8.25;
+const DEF_BRANDS=['JellyFish Lighting','Bosso Lighting','NexWave Lighting'];
+const DEF_SALESMEN=['Ben','Gabe','Brad','Doug','Chris'];
+const DEF_INSTALLERS=['Micah','Jamie','Richard','Chino'];
+
+let APP={brands:[...DEF_BRANDS],salesmen:[...DEF_SALESMEN],jobs:[]};
+let saveTimer=null, clearArmed=false, _n=0;
+
+function uid(){return Date.now().toString(36)+(++_n);}
+function makeCrew(){return{id:uid(),name:'',hours:''};}
+function makeJob(){return{id:uid(),customer:'',brand:'',salesman:'',commPct:'0',startDate:'',finishDate:'',salePrice:'',materialCost:'',miscCost:'',notes:'',crew:[makeCrew()]};}
+function pf(v){return parseFloat(v)||0;}
+function fmt(n){if(isNaN(n)||n===null)return'—';const abs=Math.abs(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');return(n<0?'($':'$')+abs+(n<0?')':'');}
+function esc(v){if(v==null)return'';return String(v).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function loadApp(){
+  try{const raw=localStorage.getItem(STORE);if(raw){const saved=JSON.parse(raw);APP=Object.assign(APP,saved);if(!saved.salesmen||saved.salesmen.some(s=>['Bradley','Salesman 2','Salesman 3'].includes(s))){APP.salesmen=[...DEF_SALESMEN];}}}catch(e){}
+  APP.jobs=[makeJob()];
+}
+function saveApp(){try{localStorage.setItem(STORE,JSON.stringify(APP));}catch(e){}}
+function scheduleSave(){clearTimeout(saveTimer);saveTimer=setTimeout(saveApp,500);}
+
+function calcJob(job){
+  const sale=pf(job.salePrice),tax=sale*TAX/100,net=sale-tax;
+  const labor=job.crew.reduce((s,c)=>s+pf(c.hours)*WAGE,0);
+  const comm=net*pf(job.commPct)/100,mat=pf(job.materialCost),misc=pf(job.miscCost);
+  const cost=labor+comm+mat+misc;
+  return{sale,tax,net,labor,comm,mat,misc,cost,profit:net-cost};
+}
+
+function brandOpts(sel){return APP.brands.map(b=>`<option value="${esc(b)}"${b===sel?' selected':''}>${esc(b)}</option>`).join('');}
+function salOpts(sel){return APP.salesmen.map(s=>`<option value="${esc(s)}"${s===sel?' selected':''}>${esc(s)}</option>`).join('');}
+function instOpts(sel){
+  const named=DEF_INSTALLERS.map(i=>`<option value="${esc(i)}"${i===sel?' selected':''}>${esc(i)}</option>`).join('');
+  return named+`<option disabled>──────────</option><option value="Additional Helper"${'Additional Helper'===sel?' selected':''}>Additional Helper</option>`;
+}
+function commOpts(sel){return['0','3','5','10'].map(p=>`<option value="${p}"${p===sel?' selected':''}>${p}%</option>`).join('');}
+
+function buildCrewRows(job){
+  return job.crew.map(c=>`
+    <div class="crew-row" id="cr-${c.id}">
+      <div class="cc"><select onchange="setCrew('${job.id}','${c.id}','name',this.value)"><option value="">— Select —</option>${instOpts(c.name)}</select></div>
+      <div class="cc"><input type="number" value="${esc(c.hours)}" placeholder="0" step="0.5" min="0" oninput="setCrew('${job.id}','${c.id}','hours',this.value)"></div>
+      <div class="cc cc-cost" id="cc-${c.id}">${c.hours?fmt(pf(c.hours)*WAGE):'—'}</div>
+      <div class="cc cc-rate">@$${WAGE}/hr</div>
+      <div class="cc" style="justify-content:center"><button class="btn-icon" onclick="delCrew('${job.id}','${c.id}')" title="Remove">×</button></div>
+    </div>`).join('');
+}
+
+function buildCard(job,idx){
+  const r=calcJob(job);
+  const pColor=r.profit>=0?'color:#27c87e':'color:#e05555';
+  return `
+  <div class="job-card" id="job-${job.id}">
+    <div class="jt">
+      <span class="job-num">#${idx+1}</span>
+      <input class="cust" type="text" value="${esc(job.customer)}" placeholder="Customer name…" oninput="setJob('${job.id}','customer',this.value)">
+      <button class="btn btn-ghost btn-sm" onclick="clearJob()" style="flex-shrink:0;font-size:12px;padding:5px 10px">Clear Job</button>
+      <select class="brand-sel" onchange="setJob('${job.id}','brand',this.value)">
+        <option value="">— Brand —</option>${brandOpts(job.brand)}
+      </select>
+    </div>
+    <div class="jmeta">
+      <div class="jmeta-cell"><div class="jmeta-lbl">Start Date</div><input type="date" value="${esc(job.startDate)}" oninput="setJob('${job.id}','startDate',this.value)"></div>
+      <div class="jmeta-cell"><div class="jmeta-lbl">Finish Date</div><input type="date" value="${esc(job.finishDate)}" oninput="setJob('${job.id}','finishDate',this.value)"></div>
+      <div class="jmeta-cell"><div class="jmeta-lbl">Salesman</div><select onchange="setJob('${job.id}','salesman',this.value)"><option value="">— Select —</option>${salOpts(job.salesman)}</select></div>
+      <div class="jmeta-cell"><div class="jmeta-lbl">Commission</div><select class="comm-sel" onchange="setJob('${job.id}','commPct',this.value)">${commOpts(job.commPct)}</select></div>
+    </div>
+    <div class="jbody">
+      <div class="jcol">
+        <div class="jsec">
+          <div class="jsec-title">👷 Crew &amp; Labor — $${WAGE}/hr each</div>
+          <div class="crew-hdr">
+            <div class="chc">Installer</div><div class="chc chc-r">Hours</div>
+            <div class="chc chc-r">Labor Cost</div><div class="chc" style="justify-content:center">Rate</div><div class="chc"></div>
+          </div>
+          <div id="crewList-${job.id}">${buildCrewRows(job)}</div>
+          <div class="crew-add"><button class="btn btn-ghost btn-sm" onclick="addCrew('${job.id}')">+ Add Crew / Helper</button></div>
+        </div>
+        <div class="jsec">
+          <div class="jsec-title">📝 Notes</div>
+          <div class="notes-wrap"><textarea rows="3" placeholder="Job notes, special instructions…" oninput="setJob('${job.id}','notes',this.value)">${esc(job.notes)}</textarea></div>
+        </div>
+      </div>
+      <div class="jcol">
+        <div class="jsec">
+          <div class="jsec-title">💰 Revenue</div>
+          <div class="jrow"><div class="jlbl">Total Sale Price</div><div class="jval"><input type="number" value="${esc(job.salePrice)}" placeholder="0.00" step="0.01" oninput="setJob('${job.id}','salePrice',this.value)"></div></div>
+          <div class="jrow"><div class="jlbl">Tax (${TAX}%)</div><div class="jval"><div class="calc calc-muted" id="el-tax-${job.id}">${job.salePrice?'− '+fmt(r.tax):'—'}</div></div></div>
+          <div class="jrow" style="background:rgba(0,181,173,.04)"><div class="jlbl" style="color:var(--teal);font-weight:600">Net Revenue</div><div class="jval"><div class="calc" id="el-net-${job.id}">${job.salePrice?fmt(r.net):'—'}</div></div></div>
+        </div>
+        <div class="jsec">
+          <div class="jsec-title">📦 Job Costs</div>
+          <div class="jrow"><div class="jlbl">Total Labor</div><div class="jval"><div class="calc calc-gold" id="el-labor-${job.id}">${r.labor?fmt(r.labor):'—'}</div></div></div>
+          <div class="jrow"><div class="jlbl">Commission (<span id="el-cpct-${job.id}">${job.commPct}</span>%)</div><div class="jval"><div class="calc calc-gold" id="el-comm-${job.id}">${fmt(r.comm)}</div></div></div>
+          <div class="jrow"><div class="jlbl">Material Cost</div><div class="jval"><input type="number" value="${esc(job.materialCost)}" placeholder="0.00" step="0.01" oninput="setJob('${job.id}','materialCost',this.value)"></div></div>
+          <div class="jrow"><div class="jlbl">Miscellaneous</div><div class="jval"><input type="number" value="${esc(job.miscCost)}" placeholder="0.00" step="0.01" oninput="setJob('${job.id}','miscCost',this.value)"></div></div>
+          <div class="jrow" style="background:rgba(240,180,41,.04)"><div class="jlbl" style="color:var(--gold);font-weight:600">Total Cost</div><div class="jval"><div class="calc calc-gold" id="el-cost-${job.id}">${fmt(r.cost)}</div></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="pban">
+      <div class="pb"><div class="pb-lbl">Net Revenue</div><div class="pb-val" id="bn-net-${job.id}">${fmt(r.net)}</div></div>
+      <div class="pb"><div class="pb-lbl">Total Cost</div><div class="pb-val" style="color:var(--gold)" id="bn-cost-${job.id}">${fmt(r.cost)}</div></div>
+      <div class="pb"><div class="pb-lbl">Labor + Commission</div><div class="pb-val" style="color:var(--gold)" id="bn-lc-${job.id}">${fmt(r.labor+r.comm)}</div></div>
+      <div class="pb" style="border-right:none"><div class="pb-lbl">Job Profit</div><div class="pb-val" style="${pColor};font-size:17px" id="bn-profit-${job.id}">${fmt(r.profit)}</div></div>
+    </div>
+  </div>`;
+}
+
+function renderAll(){
+  APP.jobs=[APP.jobs[0]];
+  document.getElementById('jobsWrap').innerHTML=buildCard(APP.jobs[0],0);
+  refreshSummary();
+}
+
+function refreshSummary(){
+  let rev=0,labor=0,comm=0,profit=0;
+  APP.jobs.forEach(j=>{if(!j.salePrice)return;const r=calcJob(j);rev+=r.net;labor+=r.labor;comm+=r.comm;profit+=r.profit;});
+  setText('s-rev',fmt(rev));setText('s-labor',fmt(labor));setText('s-comm',fmt(comm));
+  const el=document.getElementById('s-profit');
+  if(el){el.textContent=fmt(profit);el.className='card-val '+(profit<0?'cv-re':'cv-gr');}
+}
+
+function patch(jid){
+  const job=APP.jobs.find(j=>j.id===jid);if(!job)return;
+  const r=calcJob(job);const pColor=r.profit>=0?'#27c87e':'#e05555';
+  setText('el-tax-'+jid,job.salePrice?'− '+fmt(r.tax):'—');
+  setText('el-net-'+jid,job.salePrice?fmt(r.net):'—');
+  setText('el-labor-'+jid,r.labor?fmt(r.labor):'—');
+  setText('el-comm-'+jid,fmt(r.comm));setText('el-cost-'+jid,fmt(r.cost));setText('el-cpct-'+jid,job.commPct);
+  setText('bn-net-'+jid,fmt(r.net));setText('bn-cost-'+jid,fmt(r.cost));setText('bn-lc-'+jid,fmt(r.labor+r.comm));
+  const pe=document.getElementById('bn-profit-'+jid);if(pe){pe.textContent=fmt(r.profit);pe.style.color=pColor;}
+  job.crew.forEach(c=>{const el=document.getElementById('cc-'+c.id);if(el)el.textContent=c.hours?fmt(pf(c.hours)*WAGE):'—';});
+  refreshSummary();
+}
+
+function setText(id,val){const el=document.getElementById(id);if(el)el.textContent=val;}
+function setJob(jid,key,val){const j=APP.jobs.find(j=>j.id===jid);if(!j)return;j[key]=val;patch(jid);scheduleSave();}
+function setCrew(jid,cid,key,val){const j=APP.jobs.find(j=>j.id===jid);if(!j)return;const c=j.crew.find(c=>c.id===cid);if(!c)return;c[key]=val;patch(jid);scheduleSave();}
+
+function addCrew(jid){
+  const j=APP.jobs.find(j=>j.id===jid);if(!j)return;
+  j.crew.push(makeCrew());
+  const el=document.getElementById('crewList-'+jid);if(el)el.innerHTML=buildCrewRows(j);
+  scheduleSave();
+}
+
+function delCrew(jid,cid){
+  const j=APP.jobs.find(j=>j.id===jid);if(!j)return;
+  j.crew=j.crew.length<=1?[makeCrew()]:j.crew.filter(c=>c.id!==cid);
+  const el=document.getElementById('crewList-'+jid);if(el)el.innerHTML=buildCrewRows(j);
+  patch(jid);scheduleSave();
+}
+
+function clearJob(){APP.jobs=[makeJob()];try{localStorage.removeItem(STORE);}catch(e){}renderAll();scheduleSave();}
+function doPrint(){window.print();}
+
+function renderSetup(){
+  renderSetupPanel('brandsEl','brands');
+  renderSetupPanel('salesmenEl','salesmen');
+}
+function renderSetupPanel(elId,key){
+  const el=document.getElementById(elId);if(!el)return;el.innerHTML='';
+  APP[key].forEach((v,i)=>{
+    const d=document.createElement('div');d.className='setup-item';
+    d.innerHTML=`<span class="setup-item-n">${i+1}</span><input type="text" value="${esc(v)}" placeholder="Enter name…" oninput="editSetup('${key}',${i},this.value)"><button class="setup-del" onclick="removeSetup('${key}',${i})">×</button>`;
+    el.appendChild(d);
+  });
+}
+function addSetup(key){APP[key].push('');renderSetup();renderAll();scheduleSave();}
+function editSetup(key,i,val){APP[key][i]=val;renderAll();scheduleSave();}
+function removeSetup(key,i){APP[key].splice(i,1);renderSetup();renderAll();scheduleSave();}
+
+loadApp();
+document.getElementById('monthLbl').textContent=new Date().toLocaleDateString('en-US',{month:'long',year:'numeric'});
+renderAll();
+renderSetup();
+</script>
+</body>
+</html>
