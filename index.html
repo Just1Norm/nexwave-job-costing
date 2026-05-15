@@ -66,6 +66,11 @@ button{cursor:pointer;font-family:inherit;border:none;outline:none;transition:al
 .jmeta-cell select{cursor:pointer}
 .jmeta-cell select option{background:#1b2429;color:var(--white)}
 .comm-sel{color:var(--teal) !important;font-family:monospace !important;font-size:15px !important;font-weight:700 !important}
+.jcontact{display:grid;grid-template-columns:2fr 1fr;border-bottom:1px solid var(--border)}
+.jcontact-cell{border-right:1px solid var(--border)}
+.jcontact-cell:last-child{border-right:none}
+.jcontact-cell input{width:100%;background:transparent;border:2px solid transparent;color:var(--white);font-family:inherit;font-size:12px;padding:6px 8px;outline:none;display:block}
+.jcontact-cell input:focus{background:var(--teal-glow);border-color:var(--teal)}
 input[type="date"]{color-scheme:dark;font-family:monospace}
 .jbody{display:grid;grid-template-columns:1fr}
 .jcol{border-right:none}
@@ -278,7 +283,7 @@ let saveTimer=null, clearArmed=false, _n=0;
 
 function uid(){return Date.now().toString(36)+(++_n);}
 function makeCrew(){return{id:uid(),name:'',hours:''};}
-function makeJob(){return{id:uid(),customer:'',brand:'',salesman:'',commPct:'0',startDate:'',finishDate:'',salePrice:'',materialCost:'',miscCost:'',notes:'',crew:[makeCrew()]};}
+function makeJob(){return{id:uid(),customer:'',brand:'',salesman:'',commPct:'0',address:'',phone:'',startDate:'',finishDate:'',salePrice:'',materialCost:'',miscCost:'',notes:'',crew:[makeCrew()]};}
 function pf(v){return parseFloat(v)||0;}
 function fmt(n){if(isNaN(n)||n===null)return'—';const abs=Math.abs(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');return(n<0?'($':'$')+abs+(n<0?')':'');}
 function esc(v){if(v==null)return'';return String(v).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
@@ -329,6 +334,16 @@ function buildCard(job,idx){
       <select class="brand-sel" onchange="setJob('${job.id}','brand',this.value)">
         <option value="">— Brand —</option>${brandOpts(job.brand)}
       </select>
+    </div>
+    <div class="jcontact">
+      <div class="jcontact-cell">
+        <div class="jmeta-lbl">Address</div>
+        <input type="text" value="${esc(job.address)}" placeholder="123 Main St, City, TX 00000" oninput="setJob('${job.id}','address',this.value)">
+      </div>
+      <div class="jcontact-cell">
+        <div class="jmeta-lbl">Phone</div>
+        <input type="tel" value="${esc(job.phone)}" placeholder="(000) 000-0000" oninput="setJob('${job.id}','phone',this.value)">
+      </div>
     </div>
     <div class="jmeta">
       <div class="jmeta-cell"><div class="jmeta-lbl">Start Date</div><input type="date" value="${esc(job.startDate)}" oninput="setJob('${job.id}','startDate',this.value)"></div>
