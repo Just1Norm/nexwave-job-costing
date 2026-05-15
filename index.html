@@ -153,25 +153,64 @@ textarea::placeholder{color:var(--muted)}
   .hdr-btns .btn-ghost span{display:none}
 }
 @media print{
-  header .hdr-btns,.btn-red,.btn-icon,.setup-del,.crew-add,.setup{display:none !important}
-  body,html{background:#fff !important;color:#111 !important}
-  header{position:relative !important;background:#111 !important;border-bottom:3px solid #00B5AD !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .logo-text{color:#fff !important}
-  .logo-text span{color:#00B5AD !important}
-  .logo-meta b,.logo-meta small{color:#aaa !important}
-  .page{padding:10px !important}
-  .card{background:#f0fafa !important;border-top:3px solid #00B5AD !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .card-lbl{color:#666 !important}.card-val{color:#007d79 !important}
-  .cv-gr{color:#1a8f5a !important}.cv-go{color:#9a7a00 !important}.cv-re{color:#c0392b !important}
-  .job-card{break-inside:avoid;border:1px solid #ccc !important;border-left:4px solid #00B5AD !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .jt{background:#f5f5f5 !important}
-  input,select,textarea{color:#111 !important}
-  .calc{color:#007d79 !important}.calc-gold{color:#9a7a00 !important}
-  .calc-muted{color:#666 !important}.cc-cost{color:#9a7a00 !important}
-  .pban{background:#e6f7f6 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .pb-val{color:#007d79 !important}
-  .jsec-title{color:#007d79 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .jlbl{color:#555 !important}
+  /* Hide all UI chrome */
+  header .hdr-btns,.btn-red,.btn-icon,.setup-del,.crew-add,.setup,
+  .toolbar,.cards{display:none !important}
+
+  /* Reset all backgrounds/colors to plain black on white */
+  *{background:transparent !important;color:#000 !important;
+    box-shadow:none !important;text-shadow:none !important;
+    -webkit-print-color-adjust:economy !important;print-color-adjust:economy !important}
+
+  body,html{background:#fff !important;font-size:11px !important}
+
+  header{position:relative !important;border-bottom:2px solid #000 !important;
+    padding:6px 12px !important;margin-bottom:8px}
+  .logo-text{font-size:18px !important;color:#000 !important;letter-spacing:2px}
+  .logo-text span{color:#000 !important}
+  .logo-meta b{color:#444 !important;font-size:7px !important}
+  .logo-meta small{color:#444 !important}
+
+  .page{padding:4px 8px 8px !important;max-width:100% !important}
+
+  /* Job card: simple border, no colors */
+  .job-card{border:1px solid #999 !important;border-left:3px solid #000 !important;
+    border-radius:0 !important;margin-bottom:10px;break-inside:avoid}
+
+  .jt{background:#f2f2f2 !important;border-bottom:1px solid #999 !important;padding:4px 8px !important;min-height:32px !important}
+  .job-num{background:#ddd !important;color:#333 !important;font-size:10px !important}
+  .jt input.cust{color:#000 !important;font-size:13px !important}
+  .brand-sel{background:#eee !important;color:#000 !important;border:1px solid #999 !important}
+
+  .jmeta{border-bottom:1px solid #ccc !important}
+  .jmeta-cell{border-right:1px solid #ccc !important}
+  .jmeta-lbl{background:#f5f5f5 !important;color:#555 !important;border-bottom:1px solid #ccc !important}
+  .jmeta-cell input,.jmeta-cell select{color:#000 !important;font-size:11px !important}
+
+  .jsec-title{background:#f0f0f0 !important;color:#000 !important;
+    border-bottom:1px solid #ccc !important;font-size:8px !important}
+
+  .jrow{border-bottom:1px solid #e0e0e0 !important;min-height:26px !important}
+  .jlbl{background:#fafafa !important;color:#444 !important;
+    border-right:1px solid #e0e0e0 !important;font-size:11px !important}
+
+  .calc,.calc-gold,.calc-muted,.cc-cost{color:#000 !important;font-size:11px !important}
+  input,select,textarea{color:#000 !important;font-size:11px !important}
+
+  .crew-hdr{background:#f0f0f0 !important;border-bottom:1px solid #ccc !important}
+  .chc{color:#555 !important;border-right:1px solid #ccc !important;font-size:7px !important}
+  .crew-row{border-bottom:1px solid #e8e8e8 !important;min-height:26px !important}
+  .cc{border-right:1px solid #e8e8e8 !important}
+  .cc input,.cc select{font-size:11px !important}
+  .cc-rate{color:#555 !important;font-size:9px !important}
+
+  /* Profit banner: light gray, no color */
+  .pban{background:#f0f0f0 !important;border-top:1px solid #999 !important}
+  .pb{border-right:1px solid #ccc !important;padding:6px 10px !important}
+  .pb-lbl{color:#555 !important;font-size:7px !important}
+  .pb-val{color:#000 !important;font-size:13px !important;font-weight:700 !important}
+
+  textarea{border:1px solid #ddd !important;min-height:36px !important;font-size:11px !important}
 }
 </style>
 </head>
