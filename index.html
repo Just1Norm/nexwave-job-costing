@@ -18,12 +18,14 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#0c1114;color:#e5f3f3;mi
 }
 header{position:fixed;top:0;left:0;right:0;height:var(--hdr);background:var(--panel);border-bottom:2px solid var(--teal);display:flex;align-items:center;justify-content:space-between;padding:0 16px;z-index:999;box-shadow:0 2px 20px rgba(0,0,0,.6)}
 .logo{display:flex;align-items:center;gap:10px}
-.logo-text{font-size:24px;font-weight:900;letter-spacing:3px;color:var(--white);font-variant:small-caps;white-space:nowrap}
-.logo-text span{color:var(--teal)}
+.logo-text{display:flex;flex-direction:column;line-height:1}
+.logo-brand{font-size:24px;font-weight:900;letter-spacing:3px;color:var(--white);font-variant:small-caps;white-space:nowrap}
+.logo-brand span{color:var(--teal)}
+.logo-lighting{font-size:9px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--teal);text-align:right;margin-top:2px}
 .logo-pipe{width:1px;height:28px;background:var(--border2)}
 .logo-meta{display:flex;flex-direction:column}
-.logo-meta b{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--teal);font-weight:600}
-.logo-meta small{font-size:10px;color:var(--muted)}
+.logo-meta b{display:none}
+.logo-meta small{font-size:13px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--white)}
 .hdr-btns{display:flex;gap:8px;align-items:center}
 button{cursor:pointer;font-family:inherit;border:none;outline:none;transition:all .15s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;-webkit-tap-highlight-color:transparent;font-size:13px}
 .btn{padding:7px 14px;border-radius:6px;font-weight:500}
@@ -170,7 +172,10 @@ textarea::placeholder{color:var(--muted)}
 <body>
 <header>
   <div class="logo">
-    <div class="logo-text">NEX<span>WAVE</span></div>
+    <div class="logo-text">
+      <div class="logo-brand">NEX<span>WAVE</span></div>
+      <div class="logo-lighting">Lighting</div>
+    </div>
     <div class="logo-pipe"></div>
     <div class="logo-meta"><b>Lighting</b><small>Job Costing</small></div>
   </div>
